@@ -25,9 +25,13 @@ public abstract class FragmentSwitch {
      */
     public Fragment switchFragment(int position) {
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        detachCurrentFragment(transaction);
         String fragmentName = makeFragmentName(position);
         Fragment fragment = this.mFragmentManager.findFragmentByTag(fragmentName);
+        if (mCurrentFragment != null && mCurrentFragment == fragment) {//当前的fragment是要切换的fragment，不需要再次切换
+            return mCurrentFragment;
+        }
+
+        detachCurrentFragment(transaction);
         if (fragment != null) {
             transaction.attach(fragment).commit();
         } else {
@@ -45,7 +49,7 @@ public abstract class FragmentSwitch {
      */
     private void detachCurrentFragment(FragmentTransaction transaction) {
         if (mCurrentFragment != null) {
-            transaction.detach(mCurrentFragment).commit();
+            transaction.detach(mCurrentFragment);
         }
     }
 
